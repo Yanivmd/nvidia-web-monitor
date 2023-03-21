@@ -1,7 +1,9 @@
 LOCAL_HOST: False
 REMOTE_HOST: True 
 
-QUERY_GPU_CMD: nvidia-smi --query-gpu 
+QUERY_GPU_CMD: nvidia-smi --query-gpu
+
+REFRESH_FREQ_SECS: 30
 
 DISPLAY_QUERY_GPU_OPTIONS:
     - Timestamp

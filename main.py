@@ -17,7 +17,7 @@ CONFIG_FILE = 'config.yaml'
 @app.route('/')
 def show():
     log('Configuring...')
-    display_query_gpu_options, query_gpu_cmd_list, valid_gpu_attr_list, host_list = \
+    display_query_gpu_options, query_gpu_cmd_list, valid_gpu_attr_list, host_list, refresh_freq = \
         get_config(CONFIG_FILE)
     log('Start querying...')
     gpu_info_list = multiprocess_query_cmds(query_gpu_cmd_list)
@@ -39,7 +39,10 @@ def show():
     return render_template('main.html',
                            all_server_item_list=all_server_item_list,
                            gpu_attrs=valid_gpu_attr_list,
-                           header_items=display_query_gpu_options)
+                           header_items=display_query_gpu_options,
+                           refresh_freq=refresh_freq,
+                           refresh_freq_ms=refresh_freq * 1000)
+
 
 
 def get_config(config_file):
@@ -47,6 +50,7 @@ def get_config(config_file):
         config = yaml.load(stream)
     
     query_gpu_options = config['QUERY_GPU_OPTIONS']
+    refresh_freq = config['REFRESH_FREQ_SECS']
     query_gpu_cmd = config['QUERY_GPU_CMD'] + '=' + ','.join(query_gpu_options) + ' --format=csv' 
 
     display_query_gpu_options = config['DISPLAY_QUERY_GPU_OPTIONS']
@@ -65,7 +69,7 @@ def get_config(config_file):
         query_gpu_cmd_list.insert(0, query_gpu_cmd)
         host_list.insert(0, {'ip': 'localhost'})
     
-    return display_query_gpu_options, query_gpu_cmd_list, valid_gpu_attr_list, host_list
+    return display_query_gpu_options, query_gpu_cmd_list, valid_gpu_attr_list, host_list, int(refresh_freq)
 
 
 def query_info(cmd):
